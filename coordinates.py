@@ -23,7 +23,7 @@ class CoordinateFormatter:
         minutes = (abs(coordinate) % 1) * 60
         seconds = (minutes % 1) * 60
         
-        dms_coord = f"{degrees}°{int(minutes)}'{seconds:.5f}''"
+        dms_coord = f"{degrees}°{int(minutes)}'{seconds:.5f}\""
 
         return dms_coord
     
@@ -171,7 +171,7 @@ if __name__ == "__main__":
     print(formatter.dms_to_dd("61°27'30.8\"W"))
     
     # print(formatter.dms_to_dd("34°44'21.7''S"), formatter.dms_to_dd("58°53'33.7''W"), sep="\n")
-    # print(formatter.latdd_to_latdms(-34.7393611), formatter.londd_to_londms(-58.8926944), sep="\n")
+    print(formatter.latdd_to_latdms(-34.7393611), formatter.londd_to_londms(112.12), sep="\n")
     
     # transformed_coordinates = transformer.transform_coordinates(coordinates)
     
