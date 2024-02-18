@@ -41,7 +41,7 @@ class CoordinateFormatter:
         dd_coord : float
             Coordinate expressed in decimal degrees. Depending on the hemisphere, it will be a positive (N, E) or negative (S, W) number. 
         """
-        pattern = "(\d{1,3})°([0-5]?[0-9])'([0-5]?[0-9].?\d*)''([NSEW])"
+        pattern = "(\d{1,3})°([0-5]?[0-9])'([0-5]?[0-9].?\d*)\"([NSEW])"
         
         match = re.search(pattern, coordinate)
         
@@ -150,10 +150,9 @@ if __name__ == "__main__":
     
     # Show an example of the use
     
-    conversor = CoordinateFormatter()
-    transformer = CoordinateTransformer("4326", 5348)
+    formatter = CoordinateFormatter()
+    transformer = CoordinateTransformer("4326", CRS.from_epsg(5348))
 
-    
     coordinates = np.array([
             [
               -57.60365758800924,
@@ -162,30 +161,19 @@ if __name__ == "__main__":
             [
               -57.51025409413067,
               -35.609455111208554
-            ],
-            [
-              -57.271741600832954,
-              -35.57419065719577
-            ],
-            [
-              -57.21002857809172,
-              -35.44792533242946
-            ],
-            [
-              -57.460216508124205,
-              -35.3853981576566
-            ],
-            [
-              -57.60365758800924,
-              -35.4968257854251
             ]
-          ])
+        ])
     
-    print(conversor.latdd_to_latdms(0.5345))
-    print(conversor.dms_to_dd("34°44'21.7''S"), conversor.dms_to_dd("58°53'33.7''W"), sep="\n")
-    print(conversor.latdd_to_latdms(-34.7393611), conversor.londd_to_londms(-58.8926944), sep="\n")
+    # print(conversor.latdd_to_latdms(0.5345))
     
-    transformed_coordinates = transformer.transform_coordinates(coordinates)
+
+    print(formatter.dms_to_dd("33°41'12.2\"S"))
+    print(formatter.dms_to_dd("61°27'30.8\"W"))
     
-    print(transformer.transform_pair(-57.60365758800924, -35.4968257854251))
-    print(transformed_coordinates)
+    # print(formatter.dms_to_dd("34°44'21.7''S"), formatter.dms_to_dd("58°53'33.7''W"), sep="\n")
+    # print(formatter.latdd_to_latdms(-34.7393611), formatter.londd_to_londms(-58.8926944), sep="\n")
+    
+    # transformed_coordinates = transformer.transform_coordinates(coordinates)
+    
+    # print(transformer.transform_pair(-57.60365758800924, -35.4968257854251))
+    # print(transformed_coordinates)
