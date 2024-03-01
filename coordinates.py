@@ -5,6 +5,7 @@ from pyproj import CRS, Transformer
 
 class CoordinateFormatter:
     
+    @staticmethod
     def dd_to_dms(coordinate: float) -> str:
         """
         Convert a coordinate value expressed as decimal degrees into sexagesimal degrees
@@ -41,7 +42,7 @@ class CoordinateFormatter:
         dd_coord : float
             Coordinate expressed in decimal degrees. Depending on the hemisphere, it will be a positive (N, E) or negative (S, W) number. 
         """
-        pattern = "(\d{1,3})°([0-5]?[0-9])'([0-5]?[0-9].?\d*)\"([NSEW])"
+        pattern = "(\d{1,3})°\s?([0-5]?[0-9])'\s?([0-5]?[0-9].?\d*)\"\s?([NSEW])"
         
         match = re.search(pattern, coordinate)
         
@@ -72,7 +73,7 @@ class CoordinateFormatter:
         
         direction = "E" if coordinate > 0 else "W"
         
-        londms = f"{CoordinateFormatter.dd_to_dms(coordinate)}{direction}"
+        londms = f"{self.dd_to_dms(coordinate)}{direction}"
 
         return londms
     
@@ -94,7 +95,7 @@ class CoordinateFormatter:
         
         direction = "N" if coordinate > 0 else "S"
         
-        latdms = f"{CoordinateFormatter.dd_to_dms(coordinate)}{direction}"
+        latdms = f"{self.dd_to_dms(coordinate)}{direction}"
         
         return latdms
 
@@ -166,14 +167,12 @@ if __name__ == "__main__":
     
     # print(conversor.latdd_to_latdms(0.5345))
     
-
     print(formatter.dms_to_dd("33°41'12.2\"S"))
-    print(formatter.dms_to_dd("61°27'30.8\"W"))
+    print(formatter.dms_to_dd("68° 01' 38.44\" W"))
+    print(formatter.dms_to_dd("68° 01' 08.44\" W"))
     
-    # print(formatter.dms_to_dd("34°44'21.7''S"), formatter.dms_to_dd("58°53'33.7''W"), sep="\n")
     print(formatter.latdd_to_latdms(-34.7393611), formatter.londd_to_londms(112.12), sep="\n")
     
-    # transformed_coordinates = transformer.transform_coordinates(coordinates)
+    transformed_coordinates = transformer.transform_coordinates(coordinates)
     
-    # print(transformer.transform_pair(-57.60365758800924, -35.4968257854251))
-    # print(transformed_coordinates)
+    print(transformed_coordinates)
