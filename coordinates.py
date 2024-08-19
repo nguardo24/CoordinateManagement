@@ -8,7 +8,7 @@ class CoordinateFormatter:
     @staticmethod
     def dd_to_dms(coordinate: float) -> str:
         """
-        Convert a coordinate value expressed as decimal degrees into sexagesimal degrees
+        Converts coordinate values, expressed in decimal degrees, into sexagesimal degrees.
         
         Parameters
         ----------
@@ -20,44 +20,58 @@ class CoordinateFormatter:
         dms_coord : str
             Coordinate expressed in sexagesimal degrees
         """
-        degrees = abs(int(coordinate))
-        minutes = (abs(coordinate) % 1) * 60
-        seconds = (minutes % 1) * 60
+        degrees: int = abs(int(coordinate))
         
-        dms_coord = f"{degrees}°{int(minutes)}'{seconds:.5f}\""
+        minutes: float = (abs(coordinate) % 1) * 60
+        
+        seconds: float = (minutes % 1) * 60
+        
+        dms_coord: str = f"{degrees}°{int(minutes)}'{seconds:.5f}\""
 
         return dms_coord
     
-    def dms_to_dd(self, coordinate: str) -> float:
+    @staticmethod
+    def dms_to_dd(coordinate: str) -> float:
         """
-        Convert a coordinate value expressed as sexagesimal degrees into decimal degrees
+        Converts geographic coordinate values, expressed in sexagesimal degrees, into decimal degrees.
         
         Parameters
         ----------
         coordinate : str
-            Coordinate to be converted
+            Coordinate to be converted.
         
         Returns
         -------
         dd_coord : float
-            Coordinate expressed in decimal degrees. Depending on the hemisphere, it will be a positive (N, E) or negative (S, W) number. 
+            Coordinate expressed in decimal degrees. Depending on the hemisphere, it will be a positive (N, E) or negative (S, W) number.
+        
+        Raises
+        ------
+        ValueError
+            If the coordinate does not match the pattern. 
         """
-        pattern = "(\d{1,3})°\s?([0-5]?[0-9])'\s?([0-5]?[0-9].?\d*)\"\s?([NSEW])"
+        pattern = "^(\d{1,3})°\s?([0-5]?[0-9])['´]\s?([0-5]?[0-9].?\d*)\"\s?([NSEWO])$"
         
-        match = re.search(pattern, coordinate)
+        match: re.Match = re.search(pattern, coordinate)
         
-        degrees = match.group(1)
-        minutes = match.group(2)
-        seconds = match.group(3)
-        direction = match.group(4)
+        if not match:
+            raise ValueError("Invalid coordinate format!")
         
-        dd_coord = float(degrees) + (float(minutes) / 60) + (float(seconds) / 3600)
+        degrees: str = match.group(1)
+        
+        minutes: str = match.group(2)
+        
+        seconds: str = match.group(3)
+        
+        direction: str = match.group(4)
+        
+        dd_coord: float = round(float(degrees) + (float(minutes) / 60) + (float(seconds) / 3600), 5)
         
         return dd_coord if direction in ["N", "E"] else -dd_coord
         
     def londd_to_londms(self, coordinate: float) -> str:
         """
-        Convert longitude coordinates expressed in decimal degrees into sexagesimal degrees
+        Converts geographic longitude coordinate values, expressed in decimal degrees, into sexagesimal degrees.
         
         Parameters
         ----------
@@ -71,15 +85,15 @@ class CoordinateFormatter:
         """
         assert -180 <= coordinate <= 180, "Longitude should be between -180 and 180 degrees"
         
-        direction = "E" if coordinate > 0 else "W"
+        direction: str = "E" if coordinate > 0 else "W"
         
-        londms = f"{self.dd_to_dms(coordinate)}{direction}"
+        londms: str = f"{self.dd_to_dms(coordinate)}{direction}"
 
         return londms
     
     def latdd_to_latdms(self, coordinate: float) -> str:
         """
-        Convert latitude coordinates expressed in decimal degrees into sexagesimal degrees.
+        Converts geographic latitude coordinate values, expressed in decimal degrees, into sexagesimal degrees.
         
         Parameters
         ----------
@@ -93,9 +107,9 @@ class CoordinateFormatter:
         """
         assert -90 <= coordinate <= 90, "Latitude should be between -90 and 90 degrees"
         
-        direction = "N" if coordinate > 0 else "S"
+        direction: str = "N" if coordinate > 0 else "S"
         
-        latdms = f"{self.dd_to_dms(coordinate)}{direction}"
+        latdms: str = f"{self.dd_to_dms(coordinate)}{direction}"
         
         return latdms
 
@@ -127,7 +141,7 @@ class CoordinateTransformer:
     
     def transform_pair(self, x: int | float, y: int | float, z: int | float = 0) -> tuple:
         """
-        Transform individual pair of coordinates between origin and destination coordinate systems
+        Transforms individual pair of coordinates between origin and destination coordinate systems
         
         Parameters
         ----------
@@ -168,7 +182,7 @@ if __name__ == "__main__":
     # print(conversor.latdd_to_latdms(0.5345))
     
     print(formatter.dms_to_dd("33°41'12.2\"S"))
-    print(formatter.dms_to_dd("68° 01' 38.44\" W"))
+    print(formatter.dms_to_dd("68° 01´ 38.44\"O"))
     print(formatter.dms_to_dd("68° 01' 08.44\" W"))
     
     print(formatter.latdd_to_latdms(-34.7393611), formatter.londd_to_londms(112.12), sep="\n")
